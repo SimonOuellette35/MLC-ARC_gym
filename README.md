@@ -42,12 +42,14 @@ It is worth noting that, however, the accuracy does not reach **0%** even at the
 
 1. The fact that a test set does not have an exactly equivalent task in the training set does not mean that it can't be generalized to via interpolation. For example, imagine a task in the training set that consists of translating the foreground pixels diagonally to the upper right, and then setting its foreground pixels to a different color. If one of the 10 test tasks has an identical task, except for the fact that the target pixel color has never been seen during training, it could be reasonable to expect the transformer to interpolate to that task from training. In other words, it's possible that interpolation can produce a small amount of generalization across structurally different tasks if they are sufficiently similar to training tasks.
 
-2. There might be a bug in how I calculate OOD-ness that over-estimates the degree of OOD-ness. After all, there exists occurrences of tasks that are functionally equivalent, yet have different number of primitives, due to redundancies. A classic example of this is "rot270" vs "rot90 -> rot90 -> rot90". These are effectively the same tasks, yet they have a different number of nodes during generation. In theory, my OOD-ness accounts for this -- but in practice perhaps it doesn't do it properly.
+2. There might be a bug in how I calculate OOD-ness that over-estimates the degree of OOD-ness. After all, there exists occurrences of tasks that are functionally equivalent, yet have a different number of primitives, due to redundancies. A classic example of this is "rot270" vs "rot90 -> rot90 -> rot90". These are effectively the same tasks, yet they have a different number of nodes used to generate them. In theory, my OOD-ness metric accounts for this -- but in practice perhaps it doesn't do it properly.
 
 ## Usage
 
 Run the eval.py script to run a training/evaluation session. You must open the eval.py file and adjust the lines 18 to 25 to reflect the amount of overlap in number of primitives
 to chain together to create a task. Identical values between the training num_nodes interval and the test num_nodes interval will give a meta-dataset whose test set is entirely within distribution of the training set. Creating a sufficient large gap between the intervals should generate a meta-dataset with an OOD-ness level at 1, or near 1. The script will calculate that OOD-ness level and display it on the console before initiating training.
+
+If desired, you can also modify lines 27 to 38 in order to create a distribution shift in the generated grid distribution as well.
 
 Code for the MLC algorithm is taken from : https://github.com/brendenlake/MLC-ML
 
