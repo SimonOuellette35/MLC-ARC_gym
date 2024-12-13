@@ -11,13 +11,13 @@ QUANTIFY_OOD = True
 NUM_EPOCHS = 25000
 train_batch_size = 100
 test_batch_size = 10
-NUM_TRAIN_TASKS = 500
-NUM_TEST_TASKS = 10
+NUM_TRAIN_TASKS = 1000
+NUM_TEST_TASKS = 100
 
 # When both = [3, 5], ValAccuracy ends up at 100%
 comp_graph_dist = {
     'train': {
-        'num_nodes': [3, 5]
+        'num_nodes': [3, 4]
     },
     'test': {
         'num_nodes': [6, 7]
