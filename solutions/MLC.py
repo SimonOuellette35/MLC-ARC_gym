@@ -110,17 +110,18 @@ class MLC:
         decoder_output = net(target_shift, batch)
 
         # b*nq x max_length x output_size
-        logits_flat = decoder_output[:, :25, :].reshape(-1, decoder_output.shape[-1])  # (batch*max_len, output_size)
+        logits_flat = decoder_output[:, :125, :].reshape(-1, decoder_output.shape[-1])  # (batch*max_len, output_size)
         if p_lapse > 0:
             logits_flat = self.smooth_decoder_outputs(logits_flat, p_lapse, self.output_vocab)
 
         # calculate accuracy
-        val_preds = np.argmax(decoder_output[:, :25, :].cpu().data.numpy(), axis=-1)
+        val_preds = np.argmax(decoder_output[:, :125, :].cpu().data.numpy(), axis=-1)
         val_targets = target_batches.cpu().data.numpy()
 
         acc = evalUtils.calculateAccuracy(val_preds, val_targets)
 
-        loss = loss_fn(logits_flat, target_batches.reshape(-1))
+        target_batches = torch.reshape(target_batches, [-1])
+        loss = loss_fn(logits_flat, target_batches)
         loglike = -loss.cpu().item()
         dict_loss = {}
         dict_loss['ll_by_cell'] = loglike  # average over cells
@@ -146,9 +147,11 @@ class MLC:
 
         # shifted targets with padding (added SOS symbol at beginning and removed EOS symbol)
         decoder_output = net(target_shift, batch)  # b*nq x max_length x output_size
-        logits_flat = decoder_output[:, :25, :].reshape(-1, decoder_output.shape[-1])  # (b*nq*max_length, output_size)
+        logits_flat = decoder_output[:, :125, :].reshape(-1, decoder_output.shape[-1])  # (b*nq*max_length, output_size)
 
-        loss = loss_fn(logits_flat, target_batches.reshape(-1))
+        target_batches = torch.reshape(target_batches, [-1])
+
+        loss = loss_fn(logits_flat, target_batches)
         assert (not torch.isinf(loss))
         assert (not torch.isnan(loss))
         loss.backward()

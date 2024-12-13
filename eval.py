@@ -1,20 +1,20 @@
 from ARC_gym.MetaDGP import MetaDGP
 from solutions.MLC import MLC
-from ARC_gym.utils.seq_to_seq import make_biml_batch
+from ARC_gym.utils.batching import make_mlc_batch
 from torch.utils.data import DataLoader
 import ARC_gym.utils.metrics as metrics
 import ARC_gym.utils.visualization as viz
 import numpy as np
 
 QUANTIFY_OOD = True
-VISUALIZE_TASKS = False
 
 NUM_EPOCHS = 25000
 train_batch_size = 100
 test_batch_size = 10
-NUM_TRAIN_TASKS = 2000
+NUM_TRAIN_TASKS = 500
 NUM_TEST_TASKS = 10
 
+# When both = [3, 5], ValAccuracy ends up at 100%
 comp_graph_dist = {
     'train': {
         'num_nodes': [3, 5]
@@ -50,11 +50,11 @@ meta_train_dataset, meta_test_dataset, meta_train_tasks, meta_test_tasks = dgp.i
 
 meta_train_dataloader = DataLoader( meta_train_dataset,
                                     batch_size=train_batch_size,
-                                    collate_fn=lambda x:make_biml_batch(x),
+                                    collate_fn=lambda x:make_mlc_batch(x),
                                     shuffle=True)
 meta_test_dataloader = DataLoader(  meta_test_dataset,
                                     batch_size=test_batch_size,
-                                    collate_fn=lambda x:make_biml_batch(x),
+                                    collate_fn=lambda x:make_mlc_batch(x),
                                     shuffle=False)
 
 if QUANTIFY_OOD:
@@ -62,9 +62,6 @@ if QUANTIFY_OOD:
                                               meta_test_dataset, meta_test_tasks, dgp.modules)
 
         print("OOD = ", OOD)
-
-if VISUALIZE_TASKS:
-    viz.draw_batch(meta_train_dataloader, 5, 4)
 
 # use the MLC method to solve the meta-test set. What kind of accuracy are we seeing?
 model = MLC(input_vocab_size=13, # + 3 for SOS, ITEM, I/O separator tokens
