@@ -21,16 +21,18 @@ to get an accuracy of 100%. Training on 1000 randomly generated tasks each time,
 
 The left chart indicates the evolution of the test loss. As you would expect from a learning algorithm that fails to generalize out-of-distribution on task structure, it increases
 as we decrease the overlap between training and test tasks (i.e., as the test tasks become increasingly out-of-distribution w.r.t. to the training distribution). On the right,
-we see the test set accuracy. At maxium OOD-ness levels, it reaches about 37% in the experiments that I've run.
+we see the test set accuracy. At maximum OOD-ness levels, it reaches about 37% in the experiments that I've run.
 
 ## Interpretation of Results
 
 At a high level, this experiment supports the idea that Transformers struggle with the ability to learn to generalize to structurally distinct tasks. This corroborates the findings of the paper ([Human-like systematic generalization
 through a meta-learning neural network](https://www.nature.com/articles/s41586-023-06668-3.pdf), by Lake & Baroni (2023)) from which the Transformer architecture and training methdology was taken.
 
-The lack generalization to higher OOD-ness values is almost certainly **not** due to a lack of model capacity/parameters, because:
+The lack of generalization to higher OOD-ness values is almost certainly **not** due to a lack of model capacity/parameters, because:
 1. It successfully learns the tasks at the lower OOD-ness values
 2. The training curve shows that the training loss reaches near zero values. It learns the training set, but it's simply unable to learn it in a way that generalizes to the test set.
+
+One could argue that by training long enough, the Transformer could "Grok" the underlying task structures and learn to generalize. I have not tried this, and generally the grokking phenomenon has been observed on OOD variations of a same task structure (e.g. generalizing to a different grid distribution), not in meta-learning setting like this where the algorithm must generalize to new tasks.
 
 I have tried training on different amounts of distinct tasks: 100, 500, 1000, 2000, and even 5000. The best results I've seen were at 1000. It does not appear to be the case that scaling up the number of distinct training tasks past around 1000 samples improves the test set generalization performance. Keep in mind the DSL is relatively small and relatively trivial.
 
