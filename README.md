@@ -23,6 +23,8 @@ The left chart indicates the evolution of the test loss. As you would expect fro
 as we decrease the overlap between training and test tasks (i.e., as the test tasks become increasingly out-of-distribution w.r.t. to the training distribution). On the right,
 we see the test set accuracy. At maximum OOD-ness levels, it reaches about 37% in the experiments that I've run.
 
+**UPDATE**: When I used 100 test tasks instead of only 10, on a meta-dataset of OOD-ness 0.98 I reached a test accuracy of 23% instead of 37%. This may indicate that the relatively high accuracy of 37% at OOD-ness 1 in the above graphs is a statistical fluke made possible by using a relatively small test set.
+
 ## Interpretation of Results
 
 At a high level, this experiment supports the idea that Transformers struggle with the ability to learn to generalize to structurally distinct tasks. This corroborates the findings of the paper ([Human-like systematic generalization
